@@ -36,13 +36,22 @@ trustbridge-action/
 └── tsconfig.json                  # TypeScript compiler options
 ```
 
-Generated / ignored (not committed):
+Generated output:
 
 ```
-dist/                              # Compiled JavaScript (build output)
+dist/                              # Committed Linux-authoritative build output
 node_modules/                      # npm dependencies
 coverage/                          # Jest coverage reports
 ```
+
+### Source-map paths and dist refreshes
+
+Committed `dist/` is Linux-authoritative. Every source map must use POSIX-style,
+repo-relative paths so builds remain reproducible across platforms and dist
+drift detection stays deterministic. A path check runs in CI and after the
+Linux refresh build; failures should be fixed by rebuilding on Linux or
+running the `refresh-dist` workflow. Always refresh dist on Linux — do not
+commit a locally-built dist from Windows/macOS.
 
 ---
 

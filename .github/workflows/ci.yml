@@ -25,3 +25,28 @@ jobs:
           test -f README.md
           node -e "JSON.parse(require('fs').readFileSync('package.json','utf8'))"
           node -e "require('fs').readFileSync('action.yml','utf8')"
+
+  dist-drift:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build and verify source-map paths
+        run: npm run build && npm run test:map-paths
+
+      - name: Verify dist is committed and deterministic
+        run: |
+          git diff --exit-code -- dist || {
+            echo "dist drift detected. Rebuild on Linux / run refresh-dist."
+            exit 1
+          }

@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc --noEmit && ncc build src/index.ts -o dist --source-map --license licenses.txt && node scripts/normalize-maps.js",
+    "test:map-paths": "node scripts/check-map-paths.js",
     "bundle-size": "npm test -- --testPathPattern bundle-size --no-coverage",
     "typecheck": "tsc --noEmit",
     "typecheck:tests": "tsc --project tsconfig.test.json --noEmit",
