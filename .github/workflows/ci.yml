@@ -41,8 +41,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build and verify source-map paths
-        run: npm run build && npm run test:map-paths
+      - name: Build and verify source-map quality
+        run: |
+          npm run build
+          npm run test:map-paths
 
       - name: Verify dist is committed and deterministic
         run: |

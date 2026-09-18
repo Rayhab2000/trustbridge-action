@@ -48,10 +48,12 @@ coverage/                          # Jest coverage reports
 
 Committed `dist/` is Linux-authoritative. Every source map must use POSIX-style,
 repo-relative paths so builds remain reproducible across platforms and dist
-drift detection stays deterministic. A path check runs in CI and after the
-Linux refresh build; failures should be fixed by rebuilding on Linux or
-running the `refresh-dist` workflow. Always refresh dist on Linux — do not
-commit a locally-built dist from Windows/macOS.
+drift detection stays deterministic. CI parses every map as a version-3 source
+map, checks its metadata, and requires application maps to resolve into `src/`.
+Dependency-only vendor maps are allowed. The quality check runs after
+`normalize-maps.js` in CI and after the Linux refresh build; failures should be
+fixed by rebuilding on Linux or running the `refresh-dist` workflow. Always
+refresh dist on Linux — do not commit a locally-built dist from Windows/macOS.
 
 ---
 

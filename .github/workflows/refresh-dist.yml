@@ -25,7 +25,7 @@ jobs:
       - name: Build dist on Linux
         run: npm run build
 
-      - name: Verify source-map paths
+      - name: Verify source-map quality
         run: npm run test:map-paths
 
       - name: Commit refreshed dist
