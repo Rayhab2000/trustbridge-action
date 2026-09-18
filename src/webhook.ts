@@ -118,6 +118,20 @@ export function computeWebhookSignature(body: string, secret: string): string {
   return `sha256=${hmac.digest('hex')}`;
 }
 
+/**
+ * Verify a webhook signature using a constant-time comparison.
+ *
+ * Receivers should pass the raw request body so verification covers the exact
+ * bytes that were signed rather than a re-serialised JSON representation.
+ */
+export function verifyWebhookSignature(body: string, signature: string, secret: string): boolean {
+  const expected = computeWebhookSignature(body, secret);
+  const received = Buffer.from(signature, 'utf8');
+  const expectedBytes = Buffer.from(expected, 'utf8');
+
+  return received.length === expectedBytes.length && crypto.timingSafeEqual(received, expectedBytes);
+}
+
 // ---------------------------------------------------------------------------
 // Payload builder
 // ---------------------------------------------------------------------------

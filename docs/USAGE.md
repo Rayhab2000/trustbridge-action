@@ -2894,6 +2894,18 @@ app.post('/api/webhooks/trustbridge-action', (req, res) => {
 app.listen(3000);
 ```
 
+### End-to-end dry-run verification
+
+The repository's [`dry-run.yml`](../.github/workflows/dry-run.yml) workflow runs
+the action against the deterministic WireMock Horizon server in a Node 20/22
+matrix. Each job also starts a local mock receiver that verifies the signature
+over the raw request body with a timing-safe comparison and rejects payloads
+whose `schema_version` is not `"1"`. The workflow uses `comment_mode: dry-run`
+and never calls a live dashboard or sends the test secret to logs.
+
+Use this workflow as the reference for validating changes to Horizon requests,
+webhook signing, and the versioned webhook contract together.
+
 > **Important:** Use `express.raw()` (or equivalent middleware that gives you the raw bytes before JSON parsing) when verifying the signature. Running `JSON.stringify(JSON.parse(body))` can silently reorder keys and produce a different byte sequence, causing every signature check to fail.
 
 ### HMAC test vector

@@ -12,6 +12,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import {
   computeWebhookSignature,
+  verifyWebhookSignature,
   buildWebhookPayload,
   deliverWebhook,
   sendWebhookNotification,
@@ -93,6 +94,27 @@ describe('computeWebhookSignature', () => {
     expect(sig).toBe(
       'sha256=0329a06b62cd16b33eb6792be8c60b158d89a2ee3a876fce9a881ebb488c0914',
     );
+  });
+});
+
+describe('verifyWebhookSignature', () => {
+  it('accepts a signature generated from the raw body', () => {
+    const body = '{"schema_version":"1"}';
+    const signature = computeWebhookSignature(body, 'secret');
+
+    expect(verifyWebhookSignature(body, signature, 'secret')).toBe(true);
+  });
+
+  it('rejects a changed body or secret', () => {
+    const body = '{"schema_version":"1"}';
+    const signature = computeWebhookSignature(body, 'secret');
+
+    expect(verifyWebhookSignature('{"schema_version":"2"}', signature, 'secret')).toBe(false);
+    expect(verifyWebhookSignature(body, signature, 'wrong-secret')).toBe(false);
+  });
+
+  it('rejects malformed signatures without throwing', () => {
+    expect(verifyWebhookSignature('body', 'sha256=short', 'secret')).toBe(false);
   });
 });
 
